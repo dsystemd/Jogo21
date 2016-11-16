@@ -209,8 +209,15 @@ public class ControlServer extends Thread {
     public void Jogo(){
 
         DistribuirCartasIniciais();
+        String msg = "";
         for (int n = 0; n < ListaUsuarios.size(); n++) {
-            Enviar(ListaUsuarios.get(n).getIp(), "52#" , ListaUsuarios.get(n).getPorta());
+            msg.concat(ListaUsuarios.get(n).Baralho.getBaralho().toString());
+            msg.concat(ListaUsuarios.get(n).getNome());
+            msg.concat(";");
+        }
+        for (int n = 0; n < ListaUsuarios.size(); n++) {
+            
+            Enviar(ListaUsuarios.get(n).getIp(), "52#"+msg , ListaUsuarios.get(n).getPorta());
         }
         for (int n = 0; n < ListaUsuarios.size(); n++) {
             Jogada(JogadorAtual);

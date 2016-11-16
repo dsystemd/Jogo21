@@ -17,6 +17,11 @@ public class Baralho {
     public void addCarta(Carta carta){
        Baralho.add(carta);
     }
+
+    public ArrayList<Carta> getBaralho() {
+        return Baralho;
+    }
+    
     
     
 }

@@ -268,6 +268,7 @@ public class ClientGUI extends javax.swing.JFrame {
 
     private void btn_comecarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_comecarActionPerformed
         // TODO add your handling code here:
+        controlclient.Enviar("03#");
     }//GEN-LAST:event_btn_comecarActionPerformed
 
     private void btn_enviar_msgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_enviar_msgActionPerformed
