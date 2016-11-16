@@ -62,10 +62,17 @@ public class ControlClient extends Thread {
                         client.getLabel_nome().setText(getNome());
                         
                         String nomes[] = protocolo[1].split(";");
+                                              
                         client.getArea_espera().setText("");
                         for (String nome: nomes){                            
                             client.getArea_espera().append(nome + "\n");
                         }
+//                      
+//                        String nomesjog[] = protocolo[2].split(";");
+//                        client.getArea_jogando().setText("");
+//                        for (String nome: nomesjog){                            
+//                            client.getArea_jogando().append(nome + "\n");
+//                        }
                     break;
                     
                     case 54:
