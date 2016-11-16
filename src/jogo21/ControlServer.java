@@ -32,7 +32,7 @@ public class ControlServer extends Thread {
             this.porta = porta;
             serverSocket = new DatagramSocket(porta);
             ListaUsuarios = new ArrayList<>();
-
+           
         } catch (SocketException ex) {
             Logger.getLogger(ControlServer.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -41,7 +41,7 @@ public class ControlServer extends Thread {
     ServerGUI server;
     int porta;
     List<Usuario> ListaUsuarios;
-
+    
     public void run() {
         try {
 
@@ -64,6 +64,7 @@ public class ControlServer extends Thread {
                     case 1:
                         Usuario usuario = new Usuario(receivePacket.getPort(),
                                 receivePacket.getAddress().getHostAddress(), protocolo[1]);
+                        usuario.setJogando(false);
                         ListaUsuarios.add(usuario);
 
                         AtualizaLista();
@@ -80,6 +81,13 @@ public class ControlServer extends Thread {
                         AtualizaLista();
                         break;
                     case 3:
+                        for (int n = 0; n < ListaUsuarios.size(); n++) {
+                            if (receivePacket.getPort() == ListaUsuarios.get(n).getPorta()
+                                    && receivePacket.getAddress().getHostAddress().equals(ListaUsuarios.get(n).getIp())) {
+                                ListaUsuarios.get(n).setJogando(true);
+                            }
+                        }
+                        AtualizaLista();
                         ListaDeConfirmados++;
                         if(ListaDeConfirmados==ListaUsuarios.size()){
                             
@@ -87,7 +95,8 @@ public class ControlServer extends Thread {
                             Jogo();
                             
                         }
-                    
+                        break;
+  
                     case 4:
                         String nome="";
                         for (int n = 0; n < ListaUsuarios.size(); n++) {
@@ -120,8 +129,9 @@ public class ControlServer extends Thread {
                         
                         
                     case 7:
-                        DesistirPartida();
-                        
+                        DesistirPartida();         
+                        break;
+
                 }
             }
         } catch (IOException ex) {
@@ -144,15 +154,22 @@ public class ControlServer extends Thread {
     public void AtualizaLista() {
 
         String nomes = "";
-        for (Usuario nome : ListaUsuarios) {
-            nomes = nomes + nome.getNome() + ";";
+        String nomesjogando = "";
+        
+            for (Usuario nome : ListaUsuarios) {
+    
+                if (nome.getJogando() == false) {
+                    nomes = nomes + nome.getNome() + ";";
+                }
+                if (nome.getJogando() == true) {
+                    nomesjogando = nomesjogando + nome.getNome() + ";";
+                }
+            }
+        
+            for (int n = 0; n < ListaUsuarios.size(); n++) {
+                Enviar(ListaUsuarios.get(n).getIp(), "51#" + nomes.substring(0, nomes.length()-1) + "#" + nomesjogando, ListaUsuarios.get(n).getPorta());
+            }
         }
-
-        for (int n = 0; n < ListaUsuarios.size(); n++) {
-            Enviar(ListaUsuarios.get(n).getIp(), "51#" + nomes, ListaUsuarios.get(n).getPorta());
-        }
-
-    }
 
     public void Enviar(String ip, String msg, int porta) {
 
