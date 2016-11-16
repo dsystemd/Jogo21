@@ -80,11 +80,13 @@ public class ControlServer extends Thread {
                         
                     case 3:
                         //TIME
-                        Usuario usuariojog = new Usuario(receivePacket.getPort(),
-                            receivePacket.getAddress().getHostAddress(), protocolo[1]);
-                        usuariojog.setJogando(true);
-                        ListaUsuarios.add(usuariojog);
 
+                        for (int n = 0; n < ListaUsuarios.size(); n++) {
+                            if (receivePacket.getPort() == ListaUsuarios.get(n).getPorta()
+                                    && receivePacket.getAddress().getHostAddress().equals(ListaUsuarios.get(n).getIp())) {
+                                ListaUsuarios.get(n).setJogando(true);
+                            }
+                        }
                         AtualizaLista();
                         break;
                         
@@ -124,7 +126,7 @@ public class ControlServer extends Thread {
             }
         
             for (int n = 0; n < ListaUsuarios.size(); n++) {
-                Enviar(ListaUsuarios.get(n).getIp(), "51#" + nomes + "#" + nomesjogando, ListaUsuarios.get(n).getPorta());
+                Enviar(ListaUsuarios.get(n).getIp(), "51#" + nomes.substring(0, nomes.length()-1) + "#" + nomesjogando, ListaUsuarios.get(n).getPorta());
             }
         }
 
