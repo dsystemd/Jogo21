@@ -22,7 +22,10 @@ import java.util.logging.Logger;
 public class ControlServer extends Thread {
 
     DatagramSocket serverSocket;
-
+    Integer ListaDeConfirmados = 0;
+    Integer nJogador = 1;
+    Usuario  JogadorAtual;
+    
     public ControlServer(ServerGUI server, int porta) {
         try {
             this.server = server;
@@ -76,7 +79,15 @@ public class ControlServer extends Thread {
                         }
                         AtualizaLista();
                         break;
-                        
+                    case 3:
+                        ListaDeConfirmados++;
+                        if(ListaDeConfirmados==ListaUsuarios.size()){
+                            
+                            server.getText_area().append("Iniciando Jogo");
+                            Jogo();
+                            
+                        }
+                    
                     case 4:
                         String nome="";
                         for (int n = 0; n < ListaUsuarios.size(); n++) {
@@ -89,11 +100,45 @@ public class ControlServer extends Thread {
                         for (int n = 0; n < ListaUsuarios.size(); n++) {
                             Enviar(ListaUsuarios.get(n).getIp(), "54#" + nome + ": " + protocolo[1] , ListaUsuarios.get(n).getPorta());
                         }
+                    
+                    case 5:
+                        for (int n = 0; n < ListaUsuarios.size(); n++) {
+                            if (receivePacket.getPort() == ListaUsuarios.get(n).getPorta()
+                                    && receivePacket.getAddress().getHostAddress().equals(ListaUsuarios.get(n).getIp())) {
+                                PedirCarta(ListaUsuarios.get(n));
+                            }
+                        } 
+                        
+                        
+                    case 6:
+                        for (int n = 0; n < ListaUsuarios.size(); n++) {
+                            if (receivePacket.getPort() == ListaUsuarios.get(n).getPorta()
+                                    && receivePacket.getAddress().getHostAddress().equals(ListaUsuarios.get(n).getIp())) {
+                                PassarVez(ListaUsuarios.get(n));
+                            }
+                        } 
+                        
+                        
+                    case 7:
+                        DesistirPartida();
+                        
                 }
             }
         } catch (IOException ex) {
 
         }
+    }
+    
+    public void DesistirPartida(){
+        
+    }
+    
+    public void PedirCarta(Usuario Jogador){
+        Jogador.pediucarta = true;
+    }
+    
+    public void PassarVez(Usuario Jogador){
+        Jogador.passouvez = true;
     }
 
     public void AtualizaLista() {
@@ -128,7 +173,49 @@ public class ControlServer extends Thread {
 
         }
     }
+    
+    public void DarCarta(Usuario Jogador){
+        Carta carta = new Carta();
+        carta.valor = "1";
+        Jogador.Baralho.addCarta(carta);
+    }
+    
+    public void DistribuirCartasIniciais(){
+        JogadorAtual = ListaUsuarios.get(nJogador);
+        for (int n = 0; n < ListaUsuarios.size(); n++) {
+            DarCarta(ListaUsuarios.get(n));
+            DarCarta(ListaUsuarios.get(n));
+        }        
+        
+    }
+    
+    
+    public void Jogada(Usuario JogadorAtual){
+        if(JogadorAtual.passouvez){
+            ProximoJogador();
+        }
+        if(JogadorAtual.pediucarta){
+            DarCarta(JogadorAtual);
+        }
+        JogadorAtual.pediucarta = false;
+        JogadorAtual.passouvez = false;
+    }
+    
+    public void ProximoJogador(){
+        nJogador = nJogador ++;
+        JogadorAtual = ListaUsuarios.get(nJogador);
+    }
+    
+    public void Jogo(){
 
+        DistribuirCartasIniciais();
+        for (int n = 0; n < ListaUsuarios.size(); n++) {
+            Enviar(ListaUsuarios.get(n).getIp(), "52#" , ListaUsuarios.get(n).getPorta());
+        }
+        for (int n = 0; n < ListaUsuarios.size(); n++) {
+            Jogada(JogadorAtual);
+        }   
+    }
     public int getPorta() {
         return porta;
     }
