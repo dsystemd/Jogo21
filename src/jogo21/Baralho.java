@@ -19,6 +19,7 @@ public class Baralho {
     }
 
     public ArrayList<Carta> getBaralho() {
+        
         return Baralho;
     }
     

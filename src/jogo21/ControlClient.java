@@ -82,6 +82,9 @@ public class ControlClient extends Thread {
                         System.out.println(protocolo[1]);
                         client.getArea_msg().append(protocolo[1] + "\n");
                     break;
+                        
+                    case 52:   
+                        client.getArea_jogo().append("Cartas da rodada:\n");
                 }
                 
                 Enviar("08#");

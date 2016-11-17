@@ -10,9 +10,9 @@ package jogo21;
  * @author ivy
  */
 public class Carta {
-    String valor;
+    int valor;
 
-    public String getValor() {
+    public int getValor() {
         return valor;
     }
     
