@@ -24,12 +24,15 @@ public class ControlClient extends Thread {
     String servidor;
     int porta;
     String nome;
+    String nomesjog[] = null;
+    int jogvez;
 
     public ControlClient(ClientGUI client, Login login) {
         try {
             this.client = client;
             this.login = login;
             clientSocket = new DatagramSocket();
+            jogvez = -1;
 
         } catch (SocketException ex) {
             Logger.getLogger(ControlClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -53,24 +56,45 @@ public class ControlClient extends Thread {
                 System.out.println("Datagrama recebido: '" + recebido + "'\n");
                              
                 String protocolo[] = recebido.split("#");
-                int numprot = Integer.parseInt(protocolo[0]);
+                int numprot = Integer.parseInt(protocolo[0]);                               
 
                 switch (numprot) {
                     case 51: 
                         client.setVisible(true);
                         login.setVisible(false);
                         client.getLabel_nome().setText(getNome());
-                        
-                        String nomes[] = protocolo[1].split(";");
+                                             
+                        String nomes[] = protocolo[1].split(";");                                                                      
                         client.getArea_espera().setText("");
                         for (String nome: nomes){                            
                             client.getArea_espera().append(nome + "\n");
                         }
+  
+                        nomesjog = null;
+                        if (protocolo.length == 3) nomesjog = protocolo[2].split(";");                                                                      
+                        
+                        client.getArea_jogando().setText("");
+                        if (nomesjog != null){                        
+                        for (String nome: nomesjog){                            
+                            client.getArea_jogando().append(nome + "\n");
+                        }}
+
                     break;
                     
                     case 54:
                         System.out.println(protocolo[1]);
+                        if ((protocolo[1]).contains("iniciou um novo jogo")){
+                        client.getArea_jogo().append(protocolo[1]);   
+                        }else {
                         client.getArea_msg().append(protocolo[1] + "\n");
+                        }                    
+                    break;
+                    
+                    case 55:
+                        jogvez = Integer.parseInt(protocolo[1]);
+                        client.getArea_jogo().append("Vez do jogador:" + protocolo[1] + "\n");
+                        
+                        System.out.println(protocolo[1]);
                     break;
                 }
                 
@@ -79,7 +103,7 @@ public class ControlClient extends Thread {
 
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 

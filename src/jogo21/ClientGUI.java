@@ -17,6 +17,7 @@ public class ClientGUI extends javax.swing.JFrame {
 
     
     ControlClient controlclient;
+    Login login;
     /**
      * Creates new form Main_Panel
      */
@@ -24,6 +25,11 @@ public class ClientGUI extends javax.swing.JFrame {
         initComponents();                
     }
 
+    public ClientGUI(Login login) {
+        initComponents();       
+        this.login = login;
+    }    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -43,7 +49,7 @@ public class ClientGUI extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         area_espera = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
-        area_logado = new javax.swing.JTextArea();
+        area_jogando = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -121,10 +127,10 @@ public class ClientGUI extends javax.swing.JFrame {
         area_espera.setRows(5);
         jScrollPane1.setViewportView(area_espera);
 
-        area_logado.setEditable(false);
-        area_logado.setColumns(20);
-        area_logado.setRows(5);
-        jScrollPane2.setViewportView(area_logado);
+        area_jogando.setEditable(false);
+        area_jogando.setColumns(20);
+        area_jogando.setRows(5);
+        jScrollPane2.setViewportView(area_jogando);
 
         jLabel1.setText("Lista de:");
 
@@ -194,6 +200,11 @@ public class ClientGUI extends javax.swing.JFrame {
         btn_pular.setText("PULAR");
 
         btn_passar.setText("PASSAR");
+        btn_passar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_passarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -268,6 +279,7 @@ public class ClientGUI extends javax.swing.JFrame {
 
     private void btn_comecarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_comecarActionPerformed
         // TODO add your handling code here:
+     controlclient.Enviar("03#");    
     }//GEN-LAST:event_btn_comecarActionPerformed
 
     private void btn_enviar_msgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_enviar_msgActionPerformed
@@ -296,6 +308,23 @@ public class ClientGUI extends javax.swing.JFrame {
             controlclient.stop();
     }//GEN-LAST:event_formWindowClosing
 
+    private void btn_passarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_passarActionPerformed
+        boolean jogando = false;
+        for (int i=0; i < controlclient.nomesjog.length; i++ ){
+            if (controlclient.nomesjog[i].equals(this.label_nome.getText())){
+                jogando = true;
+            }
+        }
+        if (jogando){
+        if (controlclient.jogvez >= 0) {
+         if (controlclient.nomesjog[controlclient.jogvez].equals(this.label_nome.getText())){
+             controlclient.Enviar("06#");
+         }   
+        }}
+        
+        
+    }//GEN-LAST:event_btn_passarActionPerformed
+
     public static JTextArea getArea_espera() {
         return area_espera;
     }
@@ -312,12 +341,12 @@ public class ClientGUI extends javax.swing.JFrame {
         ClientGUI.area_jogo = area_jogo;
     }
 
-    public static JTextArea getArea_logado() {
-        return area_logado;
+    public static JTextArea getArea_jogando() {
+        return area_jogando;
     }
 
-    public static void setArea_logado(JTextArea area_logado) {
-        ClientGUI.area_logado = area_logado;
+    public static void setArea_jogando(JTextArea area_jogando) {
+        ClientGUI.area_jogando = area_jogando;
     }
 
     public static JTextArea getArea_msg() {
@@ -357,8 +386,8 @@ public class ClientGUI extends javax.swing.JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private static javax.swing.JTextArea area_espera;
+    private static javax.swing.JTextArea area_jogando;
     private static javax.swing.JTextArea area_jogo;
-    private static javax.swing.JTextArea area_logado;
     private static javax.swing.JTextArea area_msg;
     private javax.swing.JButton btn_comecar;
     private javax.swing.JButton btn_desconectar;

@@ -22,6 +22,8 @@ import java.util.logging.Logger;
 public class ControlServer extends Thread {
 
     DatagramSocket serverSocket;
+    Integer indexPlayInteger;
+    ArrayList<String> arrayJogadores;
 
     public ControlServer(ServerGUI server, int porta) {
         try {
@@ -29,7 +31,8 @@ public class ControlServer extends Thread {
             this.porta = porta;
             serverSocket = new DatagramSocket(porta);
             ListaUsuarios = new ArrayList<>();
-
+            indexPlayInteger = -1;
+            this.arrayJogadores = new ArrayList<>();
         } catch (SocketException ex) {
             Logger.getLogger(ControlServer.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -38,7 +41,8 @@ public class ControlServer extends Thread {
     ServerGUI server;
     int porta;
     List<Usuario> ListaUsuarios;
-
+    static Thread timer = new Thread();
+    
     public void run() {
         try {
 
@@ -61,6 +65,7 @@ public class ControlServer extends Thread {
                     case 1:
                         Usuario usuario = new Usuario(receivePacket.getPort(),
                                 receivePacket.getAddress().getHostAddress(), protocolo[1]);
+                        usuario.setJogando(false);
                         ListaUsuarios.add(usuario);
 
                         AtualizaLista();
@@ -77,6 +82,28 @@ public class ControlServer extends Thread {
                         AtualizaLista();
                         break;
                         
+                    case 3:
+//                        int comecar = 0;
+//                        for (int i = 10; i >=0; i--) {
+//                            timer.sleep(1000);
+//                            System.out.println(i);  
+//                            if (i == 0){
+//                                comecar = 1;
+//                            }
+//                        }
+
+                        for (int n = 0; n < ListaUsuarios.size(); n++) {
+                                ListaUsuarios.get(n).setJogando(true);
+                            }                        
+                        AtualizaLista();
+                        Selecionar();
+                        
+                        for (int n = 0; n < ListaUsuarios.size(); n++) {
+                            Enviar(ListaUsuarios.get(n).getIp(), "54#" + ListaUsuarios.get(n).getNome() + " iniciou um novo jogo" , ListaUsuarios.get(n).getPorta());
+                        } 
+                        break;
+                        
+                        
                     case 4:
                         String nome="";
                         for (int n = 0; n < ListaUsuarios.size(); n++) {
@@ -89,25 +116,52 @@ public class ControlServer extends Thread {
                         for (int n = 0; n < ListaUsuarios.size(); n++) {
                             Enviar(ListaUsuarios.get(n).getIp(), "54#" + nome + ": " + protocolo[1] , ListaUsuarios.get(n).getPorta());
                         }
+                        break;
+                        
+                    case 6:
+                        Selecionar();
+                        break;
                 }
             }
         } catch (IOException ex) {
-
+            Logger.getLogger(ControlServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    public void Selecionar(){
+        if (indexPlayInteger < this.arrayJogadores.size()-1){
+            indexPlayInteger ++;
+        }
+        else {
+            indexPlayInteger = 0;
+        }
+        for (int n = 0; n < ListaUsuarios.size(); n++) {
+            Enviar(ListaUsuarios.get(n).getIp(), "55#" + indexPlayInteger, ListaUsuarios.get(n).getPorta());
+        }
+    }
+    
     public void AtualizaLista() {
 
         String nomes = "";
-        for (Usuario nome : ListaUsuarios) {
-            nomes = nomes + nome.getNome() + ";";
+        String nomesjogando = "";
+        
+        this.arrayJogadores = new ArrayList<>();
+            for (Usuario nome : ListaUsuarios) {
+    
+                if (nome.getJogando() == false) {
+                    nomes = nomes + nome.getNome() + ";";
+                }
+                if (nome.getJogando() == true) {
+                    nomesjogando = nomesjogando + nome.getNome() + ";";
+                    this.arrayJogadores.add(nome.getNome());
+                }
+            }
+        
+            for (int n = 0; n < ListaUsuarios.size(); n++) {
+                Enviar(ListaUsuarios.get(n).getIp(), "51#" + nomes + "#" + nomesjogando, ListaUsuarios.get(n).getPorta());
+//            nomes.substring(0, nomes.length()-1)
+            }
         }
-
-        for (int n = 0; n < ListaUsuarios.size(); n++) {
-            Enviar(ListaUsuarios.get(n).getIp(), "51#" + nomes, ListaUsuarios.get(n).getPorta());
-        }
-
-    }
 
     public void Enviar(String ip, String msg, int porta) {
 

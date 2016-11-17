@@ -128,7 +128,7 @@ public class Login extends javax.swing.JFrame {
 
     private void btn_conectarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_conectarActionPerformed
         // TODO add your handling code here:
-        clientegui = new ClientGUI();
+        clientegui = new ClientGUI(this);
         controlclient = new ControlClient(clientegui, this);
         clientegui.setControlclient(controlclient);
 
