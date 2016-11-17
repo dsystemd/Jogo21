@@ -268,13 +268,17 @@ public class ControlServer extends Thread {
 
     public void DarCarta(Usuario Jogador, int valor) {
         Carta carta = new Carta();
-        carta.valor = valor;
+        int aux = aleatoriar(1, 13);
+        carta.valorpublico = 0;
+        carta.valorprivado = aux;
         Jogador.Baralho.addCarta(carta);
     }
 
     public void DarCarta(Usuario Jogador) {
         Carta carta = new Carta();
-        carta.valor = aleatoriar(1, 13);
+        int aux = aleatoriar(1, 13);
+        carta.valorpublico = aux;
+        carta.valorprivado = aux;
         Jogador.Baralho.addCarta(carta);
     }
 
@@ -315,12 +319,19 @@ public class ControlServer extends Thread {
         String msg = "";
         for (int n = 0; n < ListaJogadores.size(); n++) {
             ArrayList<Carta> aux = ListaJogadores.get(n).Baralho.getBaralho();
+            int contador = aux.size();
             for (int i = 0; i < aux.size(); i++) {
-                msg = msg.concat(String.valueOf(aux.get(i).getValor()));
+                msg = msg.concat(String.valueOf(aux.get(i).getValorPublico()));
                 msg = msg.concat(ListaJogadores.get(n).getNome());
-                msg = msg.concat(";");
+                if(i==contador-1){
+                    msg = msg.concat("#");
+                }
+                else{
+                    msg = msg.concat(";");
+                }
+                
             }
-
+            
         }
         System.out.println(msg);
         for (int n = 0; n < ListaJogadores.size(); n++) {

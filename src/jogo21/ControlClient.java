@@ -80,11 +80,22 @@ public class ControlClient extends Thread {
                             for (String nome : nomesjog) {
                                 client.getArea_jogando().append(nome + "\n");
                             }
-                        }
+                        } 
 
                         break;
                         
                     case 52:
+                        
+                        String nomescartas[] = protocolo[1].split(";");
+                        
+                        for(int i = 0; i<nomesjog.length;i++){
+                            for(int j = 0; j<nomescartas.length;j++){
+                            if(nomescartas[i].contains(nomesjog[j])){
+                                
+                            }
+                        }
+                        String teste = nomescartas[1].substring(1);
+                            client.getArea_jogando().append(teste + "\n");
                         
                         break;
 
