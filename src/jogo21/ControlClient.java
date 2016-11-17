@@ -43,64 +43,73 @@ public class ControlClient extends Thread {
     public void run() {
 
         try {
-            
-            while (true) {                
+
+            while (true) {
                 byte[] receiveData = new byte[1024];
 
                 DatagramPacket receivePacket = new DatagramPacket(receiveData,
                         receiveData.length);
-                            
+
                 clientSocket.receive(receivePacket);
-                
+
                 String recebido = new String(receivePacket.getData()).trim();
                 System.out.println("Datagrama recebido: '" + recebido + "'\n");
-                             
+
                 String protocolo[] = recebido.split("#");
-                int numprot = Integer.parseInt(protocolo[0]);                               
+                int numprot = Integer.parseInt(protocolo[0]);
 
                 switch (numprot) {
-                    case 51: 
+                    case 51:
                         client.setVisible(true);
                         login.setVisible(false);
                         client.getLabel_nome().setText(getNome());
-                                             
-                        String nomes[] = protocolo[1].split(";");                                                                      
+
+                        String nomes[] = protocolo[1].split(";");
                         client.getArea_espera().setText("");
-                        for (String nome: nomes){                            
+                        for (String nome : nomes) {
                             client.getArea_espera().append(nome + "\n");
                         }
-  
-                        nomesjog = null;
-                        if (protocolo.length == 3) nomesjog = protocolo[2].split(";");                                                                      
-                        
-                        client.getArea_jogando().setText("");
-                        if (nomesjog != null){                        
-                        for (String nome: nomesjog){                            
-                            client.getArea_jogando().append(nome + "\n");
-                        }}
 
-                    break;
-                    
+                        nomesjog = null;
+                        if (protocolo.length == 3) {
+                            nomesjog = protocolo[2].split(";");
+                        }
+
+                        client.getArea_jogando().setText("");
+                        if (nomesjog != null) {
+                            for (String nome : nomesjog) {
+                                client.getArea_jogando().append(nome + "\n");
+                            }
+                        }
+
+                        break;
+                        
+                    case 52:
+                        
+                        break;
+
                     case 54:
                         System.out.println(protocolo[1]);
-                        if ((protocolo[1]).contains("iniciou um novo jogo")){
-                        client.getArea_jogo().append(protocolo[1]);   
-                        }else {
-                        client.getArea_msg().append(protocolo[1] + "\n");
-                        }                    
-                    break;
-                    
+                        if ((protocolo[1]).contains("iniciou um novo jogo")) {
+                            client.getArea_jogo().append(protocolo[1] + "\n");
+                        } else if  ((protocolo[1]).contains("Seus oponentes sao: -")) {
+                            client.getArea_jogo().append(protocolo[1] + "\n"); 
+                        }
+                        else {
+                            client.getArea_msg().append(protocolo[1] + "\n");
+                        }
+                        break;
+
                     case 55:
                         jogvez = Integer.parseInt(protocolo[1]);
-                        client.getArea_jogo().append("Vez do jogador:" + protocolo[1] + "\n");
-                        
-                        System.out.println(protocolo[1]);
-                    break;
-                }
-                
-                Enviar("08#");
-                
 
+                        client.getArea_jogo().append("Vez do jogador:" + nomesjog[jogvez] + "\n");
+
+                        System.out.println(protocolo[1]);
+                        break;
+                }
+
+//                Enviar("08#");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -148,7 +157,5 @@ public class ControlClient extends Thread {
     public void setNome(String nome) {
         this.nome = nome;
     }
-    
-    
 
 }

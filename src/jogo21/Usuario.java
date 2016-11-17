@@ -15,6 +15,11 @@ public class Usuario {
     String ip;
     String nome;
     Boolean jogando;
+    
+    Baralho Baralho = new Baralho();
+    
+    boolean passouvez;
+    boolean pediucarta;
 
     public Usuario(int porta, String ip, String nome) {
         this.porta = porta;
