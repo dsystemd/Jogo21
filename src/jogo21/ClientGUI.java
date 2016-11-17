@@ -17,6 +17,7 @@ public class ClientGUI extends javax.swing.JFrame {
 
     
     ControlClient controlclient;
+    Login login;
     /**
      * Creates new form Main_Panel
      */
@@ -24,6 +25,11 @@ public class ClientGUI extends javax.swing.JFrame {
         initComponents();                
     }
 
+    public ClientGUI(Login login) {
+        initComponents();       
+        this.login = login;
+    }    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -194,6 +200,11 @@ public class ClientGUI extends javax.swing.JFrame {
         btn_pular.setText("PULAR");
 
         btn_passar.setText("PASSAR");
+        btn_passar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_passarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -296,6 +307,23 @@ public class ClientGUI extends javax.swing.JFrame {
         if (controlclient != null && controlclient.isAlive())
             controlclient.stop();
     }//GEN-LAST:event_formWindowClosing
+
+    private void btn_passarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_passarActionPerformed
+        boolean jogando = false;
+        for (int i=0; i < controlclient.nomesjog.length; i++ ){
+            if (controlclient.nomesjog[i].equals(this.label_nome.getText())){
+                jogando = true;
+            }
+        }
+        if (jogando){
+        if (controlclient.jogvez >= 0) {
+         if (controlclient.nomesjog[controlclient.jogvez].equals(this.label_nome.getText())){
+             controlclient.Enviar("06#");
+         }   
+        }}
+        
+        
+    }//GEN-LAST:event_btn_passarActionPerformed
 
     public static JTextArea getArea_espera() {
         return area_espera;
