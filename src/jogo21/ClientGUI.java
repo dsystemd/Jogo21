@@ -43,7 +43,7 @@ public class ClientGUI extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         area_espera = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
-        area_logado = new javax.swing.JTextArea();
+        area_jogando = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -121,10 +121,10 @@ public class ClientGUI extends javax.swing.JFrame {
         area_espera.setRows(5);
         jScrollPane1.setViewportView(area_espera);
 
-        area_logado.setEditable(false);
-        area_logado.setColumns(20);
-        area_logado.setRows(5);
-        jScrollPane2.setViewportView(area_logado);
+        area_jogando.setEditable(false);
+        area_jogando.setColumns(20);
+        area_jogando.setRows(5);
+        jScrollPane2.setViewportView(area_jogando);
 
         jLabel1.setText("Lista de:");
 
@@ -268,6 +268,9 @@ public class ClientGUI extends javax.swing.JFrame {
 
     private void btn_comecarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_comecarActionPerformed
         // TODO add your handling code here:
+
+        controlclient.Enviar("03#");
+
     }//GEN-LAST:event_btn_comecarActionPerformed
 
     private void btn_enviar_msgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_enviar_msgActionPerformed
@@ -312,12 +315,12 @@ public class ClientGUI extends javax.swing.JFrame {
         ClientGUI.area_jogo = area_jogo;
     }
 
-    public static JTextArea getArea_logado() {
-        return area_logado;
+    public static JTextArea getArea_jogando() {
+        return area_jogando;
     }
 
-    public static void setArea_logado(JTextArea area_logado) {
-        ClientGUI.area_logado = area_logado;
+    public static void setArea_jogando(JTextArea area_jogando) {
+        ClientGUI.area_jogando = area_jogando;
     }
 
     public static JTextArea getArea_msg() {
@@ -357,8 +360,8 @@ public class ClientGUI extends javax.swing.JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private static javax.swing.JTextArea area_espera;
+    private static javax.swing.JTextArea area_jogando;
     private static javax.swing.JTextArea area_jogo;
-    private static javax.swing.JTextArea area_logado;
     private static javax.swing.JTextArea area_msg;
     private javax.swing.JButton btn_comecar;
     private javax.swing.JButton btn_desconectar;

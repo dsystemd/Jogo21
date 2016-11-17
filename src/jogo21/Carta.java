@@ -7,8 +7,13 @@ package jogo21;
 
 /**
  *
- * @author deny_domin
+ * @author ivy
  */
-class receivePacket {
+public class Carta {
+    int valor;
+
+    public int getValor() {
+        return valor;
+    }
     
 }
