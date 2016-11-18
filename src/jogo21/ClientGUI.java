@@ -314,7 +314,7 @@ public class ClientGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void btn_passarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_passarActionPerformed
-        boolean jogando = false;
+        /*boolean jogando = false;
         for (int i=0; i < controlclient.nomesjog.length; i++ ){
             if (controlclient.nomesjog[i].equals(this.label_nome.getText())){
                 jogando = true;
@@ -325,8 +325,8 @@ public class ClientGUI extends javax.swing.JFrame {
          if (controlclient.nomesjog[controlclient.jogvez].equals(this.label_nome.getText())){
              controlclient.Enviar("06#");
          }   
-        }}
-        
+        }}*/
+        controlclient.Enviar("06#");
         
     }//GEN-LAST:event_btn_passarActionPerformed
 

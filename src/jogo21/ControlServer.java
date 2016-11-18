@@ -162,9 +162,11 @@ public class ControlServer extends Thread {
 
                     case 5:
                         PedirCarta(ListaJogadores.get(indexPlayInteger));
-                        //DarCarta(ListaJogadores.get(indexPlayInteger));         
+                        break; 
+                        
                     case 6:
-                       // Selecionar();
+                        Selecionar();
+                        Jogada(ListaJogadores.get(indexPlayInteger));
                         break;
                 }
             }
@@ -214,11 +216,10 @@ public class ControlServer extends Thread {
 
     public void PedirCarta(Usuario Jogador) {
         Jogador.pediucarta = true;
+        Jogada(ListaJogadores.get(indexPlayInteger));
+       
     }
 
-    public void PassarVez(Usuario Jogador) {
-        Jogador.passouvez = true;
-    }
 
     public void AtualizaLista() {
 
@@ -300,13 +301,10 @@ public class ControlServer extends Thread {
     }
 
     public void Jogada(Usuario JogadorAtual) {
-        if (JogadorAtual.passouvez) {
-            //Selecionar();
-        }
+        
         if (JogadorAtual.pediucarta) {
             DarCarta(JogadorAtual);
             MostrarCartas();
-            //Selecionar();
         }
         JogadorAtual.pediucarta = false;
         JogadorAtual.passouvez = false;
@@ -347,29 +345,7 @@ public class ControlServer extends Thread {
 
         DistribuirCartasIniciais();
 
-        for (int q = 0; q < ListaJogadores.size(); q++) {
-            String msg = "";
-            for (int n = 0; n < ListaJogadores.size(); n++) {
-
-                ArrayList<Carta> aux = ListaJogadores.get(n).Baralho.getBaralho();
-                int contador = aux.size();
-                for (int i = 0; i < aux.size(); i++) {
-                    if (ListaJogadores.get(n) != ListaJogadores.get(q)) {
-                        msg = msg.concat(String.valueOf(aux.get(i).getValorPublico()));
-                    } else {
-                        msg = msg.concat(String.valueOf(aux.get(i).getValorPrivado()));
-                    }
-                    //msg = msg.concat(ListaJogadores.get(n).getNome());
-                    if (i == contador - 1) {
-                        msg = msg.concat("#");
-                    } else {
-                        msg = msg.concat(";");
-                    }
-
-                }
-            }
-            Enviar(ListaJogadores.get(q).getIp(), "52#" + msg, ListaJogadores.get(q).getPorta());
-        }
+        MostrarCartas();
         Selecionar();
         for (int n = 0; n < ListaJogadores.size(); n++) {
             Jogada(JogadorAtual);

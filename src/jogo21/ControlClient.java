@@ -93,7 +93,7 @@ public class ControlClient extends Thread {
                             System.out.println("teste cartas"+cartas[i]);
                         }
                         */
-                        String cartas[][] = new String[nomesjog.length][nomesjog.length];
+                        String cartas[][] = new String[nomesjog.length][nomesjog.length+50];
                         
                         for(int i = 0;i<nomesjog.length;i++){
                             String aux[] = protocolo[i+1].split(";");
