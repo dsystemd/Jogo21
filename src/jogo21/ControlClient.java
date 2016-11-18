@@ -93,34 +93,33 @@ public class ControlClient extends Thread {
                             System.out.println("teste cartas"+cartas[i]);
                         }
                         */
-                        String cartas[][] = new String[nomesjog.length][];
+                        String cartas[][] = new String[nomesjog.length][nomesjog.length];
+                        
                         for(int i = 0;i<nomesjog.length;i++){
-                            String aux[] = protocolo[i++].split(";");
+                            String aux[] = protocolo[i+1].split(";");
                             for(int j = 0;j<aux.length;j++){
-                                cartas[i][j] = "";
+                                cartas[i][j] = aux[j];
+                            }
+                        }
+                        /*
+                        for(int i = 0;i<nomesjog.length;i++){
+                            String aux[] = protocolo[i+1].split(";");
+                            for(int j = 0;j<aux.length;j++){
+                                System.out.println(""+cartas[i][j]);
                             }
                             
                         }
-                        /*
-                        
-                        //String teste[] = nomescartas[0].split("(?<=\\D)(?=\\d)");
-                        String matriz [][];
-                        for (int i = 0; i < nomesjog.length; i++) {
-                            for (int j = 0; j < nomescartas.length; j++) {
-                                if (nomescartas[i].contains(nomesjog[j])) {
-                                    matriz [i][j] = nomescartas[j].
-                                }
-                            }
-                        }
+                        */
                         
                         for(int i = 0;i<nomesjog.length;i++){
-                            client.getArea_jogo().append("Nome: "+nomesjog[i]);
+                            
+                            client.getArea_jogo().append("Nome: "+nomesjog[i]+"->");
                             for(int j=0;j<cartas[i].length;j++){
                                client.getArea_jogo().append(cartas[i][j]+", ");
                             }
                             client.getArea_jogo().append("\n");
                         }
-                        */
+                        
 
                         break;
 
