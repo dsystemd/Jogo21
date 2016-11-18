@@ -58,7 +58,7 @@ public class ClientGUI extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         area_jogo = new javax.swing.JTextArea();
-        btn_pular = new javax.swing.JButton();
+        btn_pedir = new javax.swing.JButton();
         btn_passar = new javax.swing.JButton();
         label_nome = new javax.swing.JLabel();
 
@@ -100,7 +100,7 @@ public class ClientGUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btn_enviar_msg, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 392, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(182, 182, 182)
                 .addComponent(jLabel4)
@@ -197,7 +197,12 @@ public class ClientGUI extends javax.swing.JFrame {
         area_jogo.setRows(5);
         jScrollPane4.setViewportView(area_jogo);
 
-        btn_pular.setText("PULAR");
+        btn_pedir.setText("PEDIR CARTA");
+        btn_pedir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_pedirActionPerformed(evt);
+            }
+        });
 
         btn_passar.setText("PASSAR");
         btn_passar.addActionListener(new java.awt.event.ActionListener() {
@@ -214,7 +219,7 @@ public class ClientGUI extends javax.swing.JFrame {
                 .addGap(15, 15, 15)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(btn_pular, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btn_pedir, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(156, 156, 156)
                         .addComponent(btn_passar, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 522, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -227,7 +232,7 @@ public class ClientGUI extends javax.swing.JFrame {
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 392, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_pular, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_pedir, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_passar, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -325,6 +330,11 @@ public class ClientGUI extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btn_passarActionPerformed
 
+    private void btn_pedirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pedirActionPerformed
+        // TODO add your handling code here:
+        controlclient.Enviar("05#");
+    }//GEN-LAST:event_btn_pedirActionPerformed
+
     public static JTextArea getArea_espera() {
         return area_espera;
     }
@@ -393,7 +403,7 @@ public class ClientGUI extends javax.swing.JFrame {
     private javax.swing.JButton btn_desconectar;
     private javax.swing.JButton btn_enviar_msg;
     private javax.swing.JButton btn_passar;
-    private javax.swing.JButton btn_pular;
+    private javax.swing.JButton btn_pedir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

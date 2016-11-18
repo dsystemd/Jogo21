@@ -112,10 +112,10 @@ public class ControlClient extends Thread {
                         */
                         
                         for(int i = 0;i<nomesjog.length;i++){
-                            
                             client.getArea_jogo().append("Nome: "+nomesjog[i]+"->");
-                            for(int j=0;j<cartas[i].length;j++){
-                               client.getArea_jogo().append(cartas[i][j]+", ");
+                            String aux[] = protocolo[i+1].split(";");
+                            for(int j=0;j<aux.length;j++){
+                               client.getArea_jogo().append(cartas[i][j]+"  ");
                             }
                             client.getArea_jogo().append("\n");
                         }
