@@ -80,33 +80,57 @@ public class ControlClient extends Thread {
                             for (String nome : nomesjog) {
                                 client.getArea_jogando().append(nome + "\n");
                             }
-                        } 
+                        }
 
                         break;
+
+                    case 52:/*
+                        String cartas[]=null;
+                        for(int i = 1;i<=nomesjog.length;i++){
+                            cartas = protocolo[i].split(";");
+                        }
+                        for(int i = 0;i<nomesjog.length;i++){
+                            System.out.println("teste cartas"+cartas[i]);
+                        }
+                        */
+                        String cartas[][] = new String[nomesjog.length][];
+                        for(int i = 0;i<nomesjog.length;i++){
+                            String aux[] = protocolo[i++].split(";");
+                            for(int j = 0;j<aux.length;j++){
+                                cartas[i][j] = "";
+                            }
+                            
+                        }
+                        /*
                         
-                    case 52:
-                        
-                        String nomescartas[] = protocolo[1].split(";");
-                        
-                        for(int i = 0; i<nomesjog.length;i++){
-                            for(int j = 0; j<nomescartas.length;j++){
-                            if(nomescartas[i].contains(nomesjog[j])){
-                                
+                        //String teste[] = nomescartas[0].split("(?<=\\D)(?=\\d)");
+                        String matriz [][];
+                        for (int i = 0; i < nomesjog.length; i++) {
+                            for (int j = 0; j < nomescartas.length; j++) {
+                                if (nomescartas[i].contains(nomesjog[j])) {
+                                    matriz [i][j] = nomescartas[j].
+                                }
                             }
                         }
-                        String teste = nomescartas[1].substring(1);
-                            client.getArea_jogando().append(teste + "\n");
                         
+                        for(int i = 0;i<nomesjog.length;i++){
+                            client.getArea_jogo().append("Nome: "+nomesjog[i]);
+                            for(int j=0;j<cartas[i].length;j++){
+                               client.getArea_jogo().append(cartas[i][j]+", ");
+                            }
+                            client.getArea_jogo().append("\n");
+                        }
+                        */
+
                         break;
 
                     case 54:
                         System.out.println(protocolo[1]);
                         if ((protocolo[1]).contains("iniciou um novo jogo")) {
                             client.getArea_jogo().append(protocolo[1] + "\n");
-                        } else if  ((protocolo[1]).contains("Seus oponentes sao: -")) {
-                            client.getArea_jogo().append(protocolo[1] + "\n"); 
-                        }
-                        else {
+                        } else if ((protocolo[1]).contains("Seus oponentes sao: -")) {
+                            client.getArea_jogo().append(protocolo[1] + "\n");
+                        } else {
                             client.getArea_msg().append(protocolo[1] + "\n");
                         }
                         break;
