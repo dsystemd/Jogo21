@@ -129,7 +129,16 @@ public class ControlClient extends Thread {
                             client.getArea_jogo().append(protocolo[1] + "\n");
                         } else if ((protocolo[1]).contains("Seus oponentes sao: -")) {
                             client.getArea_jogo().append(protocolo[1] + "\n");
-                        } else {
+                        }else if((protocolo[1]).contains("Jogo Finalizado!")){
+                            client.getArea_jogo().append(protocolo[1] + "\n");
+                        }else if((protocolo[1]).contains("Ninguem venceu!")){
+                            client.getArea_jogo().append(protocolo[1] + "\n");
+                        }else if((protocolo[1]).contains("Quem chegou mais perto foi:")){
+                            client.getArea_jogo().append(protocolo[1] + "\n");
+                        }else if((protocolo[1]).contains("Sua pontuação:")){
+                            client.getArea_jogo().append(protocolo[1] + "\n");
+                        }
+                        else {
                             client.getArea_msg().append(protocolo[1] + "\n");
                         }
                         break;

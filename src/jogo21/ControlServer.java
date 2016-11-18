@@ -25,9 +25,10 @@ public class ControlServer extends Thread {
     DatagramSocket serverSocket;
     Integer indexPlayInteger;
 //    ArrayList<String> arrayJogadores;
-    Integer nJogador = 0;
-    Usuario JogadorAtual;
     String JogadorStart = "";
+    int vencedor;
+    int pontuacaovencedor = 0;
+    Usuario jogadordavez;
 
     public ControlServer(ServerGUI server, int porta) {
         try {
@@ -161,12 +162,30 @@ public class ControlServer extends Thread {
                         break;
 
                     case 5:
-                        PedirCarta(ListaJogadores.get(indexPlayInteger));
-                        break; 
-                        
+                        for (int n = 0; n < ListaJogadores.size(); n++) {
+                            if (receivePacket.getPort() == ListaJogadores.get(n).getPorta()
+                                    && receivePacket.getAddress().getHostAddress().equals(ListaJogadores.get(n).getIp())) {
+                                jogadordavez = ListaJogadores.get(n);
+                            }
+                        }
+                        if (jogadordavez == ListaJogadores.get(indexPlayInteger)) {
+                            PedirCarta(ListaJogadores.get(indexPlayInteger));
+                        }
+
+                        break;
+
                     case 6:
-                        Selecionar();
-                        Jogada(ListaJogadores.get(indexPlayInteger));
+                        for (int n = 0; n < ListaJogadores.size(); n++) {
+                            if (receivePacket.getPort() == ListaJogadores.get(n).getPorta()
+                                    && receivePacket.getAddress().getHostAddress().equals(ListaJogadores.get(n).getIp())) {
+                                jogadordavez = ListaJogadores.get(n);
+                            }
+                        }
+                        if (jogadordavez == ListaJogadores.get(indexPlayInteger)) {
+                            Selecionar();
+                            Jogada(ListaJogadores.get(indexPlayInteger));
+                        }
+
                         break;
                 }
             }
@@ -200,13 +219,25 @@ public class ControlServer extends Thread {
     }
 
     public void Selecionar() {
-        if (indexPlayInteger < ListaJogadores.size() - 1) {
-            indexPlayInteger++;
-        } else {
-            indexPlayInteger = 0;
-        }
+        int contadorjogadas = 0;
         for (int n = 0; n < ListaJogadores.size(); n++) {
-            Enviar(ListaJogadores.get(n).getIp(), "55#" + indexPlayInteger, ListaJogadores.get(n).getPorta());
+            if (ListaJogadores.get(n).jogou == true) {
+                contadorjogadas++;
+            }
+
+        }
+        System.out.println("quem jogou: " + contadorjogadas);
+        if (contadorjogadas != ListaJogadores.size()) {
+            if (indexPlayInteger < ListaJogadores.size() - 1) {
+                indexPlayInteger++;
+            } else {
+                indexPlayInteger = 0;
+            }
+            for (int n = 0; n < ListaJogadores.size(); n++) {
+                Enviar(ListaJogadores.get(n).getIp(), "55#" + indexPlayInteger, ListaJogadores.get(n).getPorta());
+            }
+        } else {
+            FimDoJogo();
         }
     }
 
@@ -216,10 +247,10 @@ public class ControlServer extends Thread {
 
     public void PedirCarta(Usuario Jogador) {
         Jogador.pediucarta = true;
+        Jogador.jogou = true;
         Jogada(ListaJogadores.get(indexPlayInteger));
-       
-    }
 
+    }
 
     public void AtualizaLista() {
 
@@ -281,8 +312,11 @@ public class ControlServer extends Thread {
     public void DarCarta(Usuario Jogador) {
         Carta carta = new Carta();
         int aux = aleatoriar(1, 13);
-        carta.valorpublico = aux;
-        carta.valorprivado = aux;
+       
+            carta.valorpublico = aux;
+            carta.valorprivado = aux;
+        
+        
         Jogador.Baralho.addCarta(carta);
     }
 
@@ -292,7 +326,6 @@ public class ControlServer extends Thread {
     }
 
     public void DistribuirCartasIniciais() {
-        JogadorAtual = ListaJogadores.get(nJogador);
         for (int n = 0; n < ListaJogadores.size(); n++) {
             DarCarta(ListaJogadores.get(n), 0);
             DarCarta(ListaJogadores.get(n));
@@ -301,18 +334,13 @@ public class ControlServer extends Thread {
     }
 
     public void Jogada(Usuario JogadorAtual) {
-        
+
         if (JogadorAtual.pediucarta) {
             DarCarta(JogadorAtual);
             MostrarCartas();
         }
         JogadorAtual.pediucarta = false;
         JogadorAtual.passouvez = false;
-    }
-
-    public void ProximoJogador() {
-        nJogador = nJogador++;
-        JogadorAtual = ListaJogadores.get(nJogador);
     }
 
     public void MostrarCartas() {
@@ -348,7 +376,7 @@ public class ControlServer extends Thread {
         MostrarCartas();
         Selecionar();
         for (int n = 0; n < ListaJogadores.size(); n++) {
-            Jogada(JogadorAtual);
+            Jogada(ListaJogadores.get(indexPlayInteger));
         }
     }
 
@@ -358,5 +386,83 @@ public class ControlServer extends Thread {
 
     public void setPorta(int porta) {
         this.porta = porta;
+    }
+
+    private void FimDoJogo() {
+        int presencaAS[] = new int[ListaJogadores.size()];
+        int contas = 0;
+        for (int n = 0; n < ListaJogadores.size(); n++) {
+            Enviar(ListaJogadores.get(n).getIp(), "54#Jogo Finalizado!", ListaJogadores.get(n).getPorta());
+        }
+
+        int pontos[] = new int[ListaJogadores.size()];
+        for (int n = 0; n < ListaJogadores.size(); n++) {
+            ArrayList<Carta> cartas = ListaJogadores.get(n).Baralho.getBaralho();
+            for (int q = 0; q < cartas.size(); q++) {
+                if (cartas.get(q).valorpublico != 1) {
+                    if(cartas.get(q).valorpublico ==11||cartas.get(q).valorpublico ==12||cartas.get(q).valorpublico ==13){
+                        pontos[n] = pontos[n] + 10; 
+                    }else{
+                      pontos[n] = pontos[n] + cartas.get(q).valorprivado;  
+                    }
+                    
+                } else {
+                    presencaAS[contas] = n;
+                    contas++;
+                }
+
+            }
+
+        }
+        if (contas > 0) {
+
+            for (int n = 0; n < presencaAS.length; n++) {
+                if(pontos[presencaAS[n]]+11==21){
+                    pontos[presencaAS[n]] = pontos[presencaAS[n]] +11;
+                }
+                else if(pontos[presencaAS[n]]+1==21){
+                    pontos[presencaAS[n]] = pontos[presencaAS[n]] +1;
+                }
+                else if (pontos[presencaAS[n]]+11<21){
+                    pontos[presencaAS[n]] = pontos[presencaAS[n]] +11;
+                }else{
+                    pontos[presencaAS[n]] = pontos[presencaAS[n]] +1;
+                }
+            }
+        }
+
+        for (int n = 0; n < ListaJogadores.size(); n++) {
+            if (pontos[n] == 21) {
+                pontuacaovencedor = pontos[n];
+                vencedor = n;
+            }
+        }
+        if (pontuacaovencedor == 0) {
+            for (int n = 0; n < ListaJogadores.size(); n++) {
+                Enviar(ListaJogadores.get(n).getIp(), "54#Ninguem venceu!", ListaJogadores.get(n).getPorta());
+            }
+
+            for (int n = 0; n < ListaJogadores.size(); n++) {
+                if (pontos[n] < 21 && pontos[n] > pontuacaovencedor) {
+                    vencedor = n;
+                    pontuacaovencedor = pontos[n]; 
+                }
+            }
+            if (pontos[vencedor] < 21) {
+                for (int n = 0; n < ListaJogadores.size(); n++) {
+                    Enviar(ListaJogadores.get(n).getIp(), "54#Quem chegou mais perto foi:" + ListaJogadores.get(vencedor).nome, ListaJogadores.get(n).getPorta());
+                }
+            }
+
+        }
+        else{
+            for (int n = 0; n < ListaJogadores.size(); n++) {
+            Enviar(ListaJogadores.get(n).getIp(), "54#Vencedor:" + ListaJogadores.get(vencedor).nome + "-> " + pontos[n] + "\n", ListaJogadores.get(n).getPorta());
+        }
+        }
+        for (int n = 0; n < ListaJogadores.size(); n++) {
+            Enviar(ListaJogadores.get(n).getIp(), "54#Sua pontuação:" + ListaJogadores.get(n).nome + "-> " + pontos[n] + "\n", ListaJogadores.get(n).getPorta());
+        }
+
     }
 }

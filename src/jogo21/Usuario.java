@@ -20,7 +20,7 @@ public class Usuario {
     
     boolean passouvez;
     boolean pediucarta;
-
+    boolean jogou = false;
     public Usuario(int porta, String ip, String nome) {
         this.porta = porta;
         this.ip = ip;

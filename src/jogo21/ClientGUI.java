@@ -332,6 +332,7 @@ public class ClientGUI extends javax.swing.JFrame {
 
     private void btn_pedirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pedirActionPerformed
         // TODO add your handling code here:
+        
         controlclient.Enviar("05#");
     }//GEN-LAST:event_btn_pedirActionPerformed
 
