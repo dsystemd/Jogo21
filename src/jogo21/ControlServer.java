@@ -105,7 +105,7 @@ public class ControlServer extends Thread {
 //                                comecar = 1;
 //                            }
 //                        }
-                        if (ListaJogadores.size() == 0) {
+                        if ((ListaJogadores.size() == 0) && (ListaUsuarios.size() > 1)) {
                             for (int n = 0; n < ListaUsuarios.size(); n++) {
                                 ListaJogadores.add(ListaUsuarios.get(n));
                             }
