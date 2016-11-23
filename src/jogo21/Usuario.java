@@ -15,7 +15,15 @@ public class Usuario {
     String ip;
     String nome;
     Boolean jogando;
-    
+
+    public Boolean getOnline() {
+        return online;
+    }
+
+    public void setOnline(Boolean online) {
+        this.online = online;
+    }
+    Boolean online;
     Baralho Baralho = new Baralho();
     
     boolean passouvez;

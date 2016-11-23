@@ -85,41 +85,41 @@ public class ControlClient extends Thread {
                         break;
 
                     case 52:/*
-                        String cartas[]=null;
-                        for(int i = 1;i<=nomesjog.length;i++){
-                            cartas = protocolo[i].split(";");
-                        }
-                        for(int i = 0;i<nomesjog.length;i++){
-                            System.out.println("teste cartas"+cartas[i]);
-                        }
-                        */
-                        String cartas[][] = new String[nomesjog.length][nomesjog.length+50];
-                        
-                        for(int i = 0;i<nomesjog.length;i++){
-                            String aux[] = protocolo[i+1].split(";");
-                            for(int j = 0;j<aux.length;j++){
+                         String cartas[]=null;
+                         for(int i = 1;i<=nomesjog.length;i++){
+                         cartas = protocolo[i].split(";");
+                         }
+                         for(int i = 0;i<nomesjog.length;i++){
+                         System.out.println("teste cartas"+cartas[i]);
+                         }
+                         */
+
+                        String cartas[][] = new String[nomesjog.length][nomesjog.length + 50];
+
+                        for (int i = 0; i < nomesjog.length; i++) {
+                            String aux[] = protocolo[i + 1].split(";");
+                            for (int j = 0; j < aux.length; j++) {
                                 cartas[i][j] = aux[j];
                             }
                         }
                         /*
-                        for(int i = 0;i<nomesjog.length;i++){
-                            String aux[] = protocolo[i+1].split(";");
-                            for(int j = 0;j<aux.length;j++){
-                                System.out.println(""+cartas[i][j]);
-                            }
+                         for(int i = 0;i<nomesjog.length;i++){
+                         String aux[] = protocolo[i+1].split(";");
+                         for(int j = 0;j<aux.length;j++){
+                         System.out.println(""+cartas[i][j]);
+                         }
                             
-                        }
-                        */
-                        
-                        for(int i = 0;i<nomesjog.length;i++){
-                            client.getArea_jogo().append("Nome: "+nomesjog[i]+"->");
-                            String aux[] = protocolo[i+1].split(";");
-                            for(int j=0;j<aux.length;j++){
-                               client.getArea_jogo().append(cartas[i][j]+"  ");
+                         }
+                         */
+
+                        for (int i = 0; i < nomesjog.length; i++) {
+                            client.getArea_jogo().append("Nome: " + nomesjog[i] + "->");
+                            String aux[] = protocolo[i + 1].split(";");
+                            for (int j = 0; j < aux.length; j++) {
+                                client.getArea_jogo().append(cartas[i][j] + "  ");
                             }
                             client.getArea_jogo().append("\n");
                         }
-                        
 
                         break;
 
@@ -129,16 +129,19 @@ public class ControlClient extends Thread {
                             client.getArea_jogo().append(protocolo[1] + "\n");
                         } else if ((protocolo[1]).contains("Seus oponentes sao: -")) {
                             client.getArea_jogo().append(protocolo[1] + "\n");
-                        }else if((protocolo[1]).contains("Jogo Finalizado!")){
+                        } else if ((protocolo[1]).contains("Jogo Finalizado!")) {
                             client.getArea_jogo().append(protocolo[1] + "\n");
-                        }else if((protocolo[1]).contains("Ninguem venceu!")){
+                        } else if ((protocolo[1]).contains("Ninguem venceu!")) {
                             client.getArea_jogo().append(protocolo[1] + "\n");
-                        }else if((protocolo[1]).contains("Quem chegou mais perto foi:")){
+                        } else if ((protocolo[1]).contains("Quem chegou mais perto foi:")) {
                             client.getArea_jogo().append(protocolo[1] + "\n");
-                        }else if((protocolo[1]).contains("Sua pontuação:")){
+                        } else if ((protocolo[1]).contains("Sua pontuação:")) {
                             client.getArea_jogo().append(protocolo[1] + "\n");
-                        }
-                        else {
+                        } else if ((protocolo[1]).contains("Jogador")) {
+                            client.getArea_jogo().append(protocolo[1] + "\n");
+                        }  else if ((protocolo[1]).contains("Vencedor")) {
+                            client.getArea_jogo().append(protocolo[1] + "\n");
+                        } else {
                             client.getArea_msg().append(protocolo[1] + "\n");
                         }
                         break;
@@ -150,9 +153,12 @@ public class ControlClient extends Thread {
 
                         System.out.println(protocolo[1]);
                         break;
+                    case 56:
+                        client.getArea_jogo().append(nomesjog[jogvez] + "falta "+protocolo[1]+" para terminar!"  + "\n");
+                        break;
                 }
 
-//                Enviar("08#");
+                Enviar("08#");
             }
         } catch (Exception e) {
             e.printStackTrace();

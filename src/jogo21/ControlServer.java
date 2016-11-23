@@ -13,6 +13,8 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,12 +50,14 @@ public class ControlServer extends Thread {
     int porta;
     List<Usuario> ListaUsuarios;
     List<Usuario> ListaJogadores;
-    static Thread timer = new Thread();
+
 
     public void run() {
+        
         try {
 
             while (true) {
+               
                 byte[] receiveData = new byte[1024];
                 DatagramPacket receivePacket = new DatagramPacket(receiveData,
                         receiveData.length);
@@ -67,9 +71,27 @@ public class ControlServer extends Thread {
 
                 String protocolo[] = sentence.split("#");
                 int numprot = Integer.parseInt(protocolo[0]);
-
+                int nma = sentence.length();
                 switch (numprot) {
                     case 1:
+                        if (protocolo.length != 2) {
+                            Enviar(receivePacket.getAddress().getHostAddress(), "99#ERRO_NICK_INVALIDO#", receivePacket.getPort());
+                            break;
+
+                        } else if (protocolo[1].contains(";")) {
+                            Enviar(receivePacket.getAddress().getHostAddress(), "99#ERRO_NICK_INVALIDO#", receivePacket.getPort());
+                            break;
+                        } else if (protocolo[1].length() > 10) {
+                            Enviar(receivePacket.getAddress().getHostAddress(), "99#ERRO_NICK_EXTENSO#", receivePacket.getPort());
+                            break;
+                        }
+                        for (int n = 0; n < ListaJogadores.size(); n++) {
+                            if (protocolo[1] == ListaJogadores.get(n).getNome()) {
+                                Enviar(receivePacket.getAddress().getHostAddress(), "99#ERRO_NICK_REPETIDO#", receivePacket.getPort());
+                                break;
+                            }
+                        }
+
                         Usuario usuario = new Usuario(receivePacket.getPort(),
                                 receivePacket.getAddress().getHostAddress(), protocolo[1]);
                         usuario.setJogando(false);
@@ -97,6 +119,11 @@ public class ControlServer extends Thread {
                         break;
 
                     case 3:
+                        if(ListaUsuarios.size()<2){
+                            Enviar(receivePacket.getAddress().getHostAddress(), "99#ERRO_POUCOS_JOGADORES#", receivePacket.getPort());
+                            break;
+                        }
+                        
 //                        int comecar = 0;
 //                        for (int i = 10; i >=0; i--) {
 //                            timer.sleep(1000);
@@ -182,18 +209,51 @@ public class ControlServer extends Thread {
                             }
                         }
                         if (jogadordavez == ListaJogadores.get(indexPlayInteger)) {
+                            ListaJogadores.get(indexPlayInteger).jogou = true;
                             Selecionar();
                             Jogada(ListaJogadores.get(indexPlayInteger));
                         }
 
                         break;
+                    case 7:
+
+                        if (jogadordavez == ListaJogadores.get(indexPlayInteger)) {
+                            ListaUsuarios.add(ListaJogadores.get(indexPlayInteger));
+                            ListaJogadores.remove(ListaUsuarios.get(indexPlayInteger));
+                            AtualizaLista();
+                            Selecionar();
+                            Jogada(ListaJogadores.get(indexPlayInteger));
+                        }
+
+                        break;
+                    case 8:
+                        for (int n = 0; n < ListaJogadores.size(); n++) {
+                            if (receivePacket.getPort() == ListaJogadores.get(n).getPorta()
+                                    && receivePacket.getAddress().getHostAddress().equals(ListaJogadores.get(n).getIp())) {
+                                ListaJogadores.get(n).online = true;
+                            }
+                        }
+                        
+                        /*for (int n = 0; n < ListaJogadores.size(); n++) {
+                          / if (ListaJogadores.get(n).getOnline()==false) {
+                                //ListaJogadores.remove(n);
+                            }
+
+                        }*/
+                        for (int n = 0; n < ListaJogadores.size(); n++) {
+                            ListaJogadores.get(n).online = false;
+
+                        }
+
                 }
             }
         } catch (IOException ex) {
             Logger.getLogger(ControlServer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ControlServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     public void EnviaOponentes() {
         String nomes = "";
 
@@ -218,7 +278,7 @@ public class ControlServer extends Thread {
         }
     }
 
-    public void Selecionar() {
+    public void Selecionar() throws InterruptedException {
         int contadorjogadas = 0;
         for (int n = 0; n < ListaJogadores.size(); n++) {
             if (ListaJogadores.get(n).jogou == true) {
@@ -226,7 +286,7 @@ public class ControlServer extends Thread {
             }
 
         }
-        System.out.println("quem jogou: " + contadorjogadas);
+
         if (contadorjogadas != ListaJogadores.size()) {
             if (indexPlayInteger < ListaJogadores.size() - 1) {
                 indexPlayInteger++;
@@ -235,17 +295,27 @@ public class ControlServer extends Thread {
             }
             for (int n = 0; n < ListaJogadores.size(); n++) {
                 Enviar(ListaJogadores.get(n).getIp(), "55#" + indexPlayInteger, ListaJogadores.get(n).getPorta());
-            }
+            }/*
+             for (int n = 10; n > 0; n--) {
+             if (ListaJogadores.get(indexPlayInteger).jogou==false)  {
+             for (int i = 0; i < ListaJogadores.size(); i++) {
+             Enviar(ListaJogadores.get(i).getIp(), "56#" + n, ListaJogadores.get(i).getPorta());
+             }
+             Thread.sleep(1 * 1000);
+             }
+
+             }*/
+            /*if(ListaJogadores.get(indexPlayInteger).jogou==false){
+             ListaJogadores.get(indexPlayInteger).jogou=true;
+             Selecionar();
+             }*/
+
         } else {
             FimDoJogo();
         }
     }
 
-    public void DesistirPartida() {
-
-    }
-
-    public void PedirCarta(Usuario Jogador) {
+    public void PedirCarta(Usuario Jogador) throws InterruptedException {
         Jogador.pediucarta = true;
         Jogador.jogou = true;
         Jogada(ListaJogadores.get(indexPlayInteger));
@@ -299,6 +369,7 @@ public class ControlServer extends Thread {
         } catch (Exception e) {
 
         }
+
     }
 
     public void DarCarta(Usuario Jogador, int valor) {
@@ -312,11 +383,10 @@ public class ControlServer extends Thread {
     public void DarCarta(Usuario Jogador) {
         Carta carta = new Carta();
         int aux = aleatoriar(1, 13);
-       
-            carta.valorpublico = aux;
-            carta.valorprivado = aux;
-        
-        
+
+        carta.valorpublico = aux;
+        carta.valorprivado = aux;
+
         Jogador.Baralho.addCarta(carta);
     }
 
@@ -333,11 +403,12 @@ public class ControlServer extends Thread {
 
     }
 
-    public void Jogada(Usuario JogadorAtual) {
+    public void Jogada(Usuario JogadorAtual) throws InterruptedException {
 
         if (JogadorAtual.pediucarta) {
             DarCarta(JogadorAtual);
             MostrarCartas();
+            Contagem();
         }
         JogadorAtual.pediucarta = false;
         JogadorAtual.passouvez = false;
@@ -369,7 +440,7 @@ public class ControlServer extends Thread {
         }
     }
 
-    public void Jogo() {
+    public void Jogo() throws InterruptedException {
 
         DistribuirCartasIniciais();
 
@@ -388,6 +459,54 @@ public class ControlServer extends Thread {
         this.porta = porta;
     }
 
+    public void Contagem() throws InterruptedException {
+        int presencaAS[] = new int[ListaJogadores.size()];
+        int contas = 0;
+        int pontos[] = new int[ListaJogadores.size()];
+        for (int n = 0; n < ListaJogadores.size(); n++) {
+            ArrayList<Carta> cartas = ListaJogadores.get(n).Baralho.getBaralho();
+            for (int q = 0; q < cartas.size(); q++) {
+                if (cartas.get(q).valorpublico != 1) {
+                    if (cartas.get(q).valorpublico == 11 || cartas.get(q).valorpublico == 12 || cartas.get(q).valorpublico == 13) {
+                        pontos[n] = pontos[n] + 10;
+                    } else {
+                        pontos[n] = pontos[n] + cartas.get(q).valorprivado;
+                    }
+
+                } else {
+                    presencaAS[contas] = n;
+                    contas++;
+                }
+
+            }
+
+        }
+        if (contas > 0) {
+
+            for (int n = 0; n < presencaAS.length; n++) {
+                if (pontos[presencaAS[n]] + 11 == 21) {
+                    pontos[presencaAS[n]] = pontos[presencaAS[n]] + 11;
+                } else if (pontos[presencaAS[n]] + 1 == 21) {
+                    pontos[presencaAS[n]] = pontos[presencaAS[n]] + 1;
+                } else if (pontos[presencaAS[n]] + 11 < 21) {
+                    pontos[presencaAS[n]] = pontos[presencaAS[n]] + 11;
+                } else {
+                    pontos[presencaAS[n]] = pontos[presencaAS[n]] + 1;
+                }
+            }
+        }
+        for (int q = 0; q < ListaJogadores.size(); q++) {
+            if (pontos[q] > 21 && q == indexPlayInteger) {
+                for (int n = 0; n < ListaJogadores.size(); n++) {
+                    Enviar(ListaJogadores.get(n).getIp(), "54#Jogador " + ListaJogadores.get(q).getNome() + " estourou!", ListaJogadores.get(n).getPorta());
+                }
+                Selecionar();
+            }
+
+        }
+
+    }
+
     private void FimDoJogo() {
         int presencaAS[] = new int[ListaJogadores.size()];
         int contas = 0;
@@ -400,12 +519,12 @@ public class ControlServer extends Thread {
             ArrayList<Carta> cartas = ListaJogadores.get(n).Baralho.getBaralho();
             for (int q = 0; q < cartas.size(); q++) {
                 if (cartas.get(q).valorpublico != 1) {
-                    if(cartas.get(q).valorpublico ==11||cartas.get(q).valorpublico ==12||cartas.get(q).valorpublico ==13){
-                        pontos[n] = pontos[n] + 10; 
-                    }else{
-                      pontos[n] = pontos[n] + cartas.get(q).valorprivado;  
+                    if (cartas.get(q).valorpublico == 11 || cartas.get(q).valorpublico == 12 || cartas.get(q).valorpublico == 13) {
+                        pontos[n] = pontos[n] + 10;
+                    } else {
+                        pontos[n] = pontos[n] + cartas.get(q).valorprivado;
                     }
-                    
+
                 } else {
                     presencaAS[contas] = n;
                     contas++;
@@ -417,16 +536,14 @@ public class ControlServer extends Thread {
         if (contas > 0) {
 
             for (int n = 0; n < presencaAS.length; n++) {
-                if(pontos[presencaAS[n]]+11==21){
-                    pontos[presencaAS[n]] = pontos[presencaAS[n]] +11;
-                }
-                else if(pontos[presencaAS[n]]+1==21){
-                    pontos[presencaAS[n]] = pontos[presencaAS[n]] +1;
-                }
-                else if (pontos[presencaAS[n]]+11<21){
-                    pontos[presencaAS[n]] = pontos[presencaAS[n]] +11;
-                }else{
-                    pontos[presencaAS[n]] = pontos[presencaAS[n]] +1;
+                if (pontos[presencaAS[n]] + 11 == 21) {
+                    pontos[presencaAS[n]] = pontos[presencaAS[n]] + 11;
+                } else if (pontos[presencaAS[n]] + 1 == 21) {
+                    pontos[presencaAS[n]] = pontos[presencaAS[n]] + 1;
+                } else if (pontos[presencaAS[n]] + 11 < 21) {
+                    pontos[presencaAS[n]] = pontos[presencaAS[n]] + 11;
+                } else {
+                    pontos[presencaAS[n]] = pontos[presencaAS[n]] + 1;
                 }
             }
         }
@@ -445,7 +562,7 @@ public class ControlServer extends Thread {
             for (int n = 0; n < ListaJogadores.size(); n++) {
                 if (pontos[n] < 21 && pontos[n] > pontuacaovencedor) {
                     vencedor = n;
-                    pontuacaovencedor = pontos[n]; 
+                    pontuacaovencedor = pontos[n];
                 }
             }
             if (pontos[vencedor] < 21) {
@@ -454,15 +571,21 @@ public class ControlServer extends Thread {
                 }
             }
 
-        }
-        else{
+        } else {
             for (int n = 0; n < ListaJogadores.size(); n++) {
-            Enviar(ListaJogadores.get(n).getIp(), "54#Vencedor:" + ListaJogadores.get(vencedor).nome + "-> " + pontos[n] + "\n", ListaJogadores.get(n).getPorta());
-        }
+                Enviar(ListaJogadores.get(n).getIp(), "54#Vencedor:" + ListaJogadores.get(vencedor).nome + "-> " + pontos[n] + "\n", ListaJogadores.get(n).getPorta());
+            }
         }
         for (int n = 0; n < ListaJogadores.size(); n++) {
             Enviar(ListaJogadores.get(n).getIp(), "54#Sua pontuação:" + ListaJogadores.get(n).nome + "-> " + pontos[n] + "\n", ListaJogadores.get(n).getPorta());
         }
+        for (int n = 0; n < ListaJogadores.size(); n++) {
+            ListaUsuarios.add(ListaJogadores.get(n));
+        }
 
+        ListaJogadores.removeAll(ListaUsuarios);
+        indexPlayInteger = null;
+
+        AtualizaLista();
     }
 }
